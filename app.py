@@ -1,13 +1,14 @@
 import csv
 from tkinter import *
-from time import sleep
 from threading import Thread
 from playsound import playsound
+from utils import get_plays, get_players, get_lines
 
-plays = []
+
+modes = ["Single-Player", "Multi-Player"]
+plays = get_plays()
 players = []
 lines = []
-modes = ["Single-Player", "Multi-Player"]
 
 selectedPlay = None
 selectedMode = modes[0]
@@ -17,7 +18,9 @@ window = Tk()
 bg = PhotoImage(file = "assets/bg.png")
 bg = bg.subsample(2, 2)
 bphoto1 = PhotoImage(file = "assets/start.png")
-bimage1 = bphoto1.subsample(5, 6)
+nxt = PhotoImage(file = "assets/next.png")
+nxtimg = nxt.subsample(40, 40)
+bimage1 = bphoto1.subsample(6, 8)
 
 window.title("Theatre Pros(e)")
 window.resizable(False, False)
@@ -29,12 +32,6 @@ frame1.pack(fill="both", expand=True)
 frame2 = None
 count = 0
 
-with open('./plays.csv', 'r') as data:
-    for line in csv.DictReader(data):
-        play = line['Play']
-        if play not in plays:
-            plays.append(play)
-
 def startPlay():
     global lines, frame2, count
     frame1.destroy()
@@ -42,37 +39,29 @@ def startPlay():
     Label(frame2, image=bg).place(bordermode=INSIDE)
     Label(frame2, fg="black", text="Theatre Pros(e)", font=("roboto", 40)).place(x=250, y=70)
     frame2.pack(fill="both", expand=True)
-    Button(frame2, text="Start Play", image=bimage1, command=nextLine).place(x=350, y=430)
-    if selectedMode == modes[0]:
-        with open('./plays.csv', 'r') as data:
-            for line in csv.DictReader(data):
-                if line['Play'] == selectedPlay and line['Player'] == selectedPlayer:
-                    lines.append(line)
-                    # print("Line " + line['PlayerLinenumber'] + " " + line['PlayerLine'])
-                    # sleep(len(line['PlayerLine'])*0.14)
-    else:
-        with open('./plays.csv', 'r') as data:
-            for line in csv.DictReader(data):
-                if line['Play'] == selectedPlay:
-                    lines.append(line)
-                    # print("Line " + line['PlayerLinenumber'] + " Player: " + line['Player'] + " - " + line['PlayerLine'])
-                    # sleep(len(line['PlayerLine'])*0.14)  
-    # playsound("assets/applause.mp3")
+    Button(frame2, image=nxtimg, command=nextLine).place(x=800, y=430)
+    lines = get_lines(selectedPlay, selectedPlayer)  
+    Label(frame2, fg="black", text=lines[count]['PlayerLine'], font=("roboto", 20)).place(x=100, y=300)
+    count = count + 1
 
 def nextLine():
     global frame2, count, lines
     frame2.destroy()
     frame2 = Frame(window)
     Label(frame2, image=bg).place(bordermode=INSIDE)
-    Label(frame2, fg="black", text="Theatre Pros(e)", font=("roboto", 40)).place(x=250, y=70)
     frame2.pack(fill="both", expand=True)
-    Button(frame2, text="Start Play", image=bimage1, command=nextLine).place(x=350, y=430)
+    Button(frame2, image=nxtimg, command=nextLine).place(x=800, y=430)
     if count < len(lines):
         Label(frame2, fg="black", text=lines[count]['PlayerLine'], font=("roboto", 20)).place(x=100, y=300)
         count = count + 1
     else:
-        Label(frame2, fg="black", text="Standing Ovation", font=("roboto", 20)).place(x=100, y=300)
-        playsound("assets/applause.mp3")
+        if count == len(lines):
+            Label(frame2, fg="black", text=str(count)+" / "+str(count), font=("roboto", 40)).place(x=250, y=70)
+            Label(frame2, fg="black", text="Standing Ovation!", font=("helvetica", 40)).place(x=250, y=200)
+        else:
+            playsound("assets/applause.mp3")
+            window.destroy()        
+        count = count + 1    
 
 def selectMode(choice):
     global selectedMode
@@ -90,14 +79,7 @@ def selectPlayer(choice):
 
 def displayPlayers():
     global players
-    players = []
-    with open('./plays.csv', 'r') as data:
-        for line in csv.DictReader(data):
-            play = line['Play']
-            if play == selectedPlay:
-                player = line['Player']
-                if player not in players:
-                    players.append(player)
+    players = get_players(selectedPlay)
     players_value = StringVar(frame1)
     players_value.set("Select a Player")
     players_menu = OptionMenu(frame1, players_value, *players, command=selectPlayer)
@@ -121,8 +103,10 @@ def displayPlays():
 def main():
     displayModes()
     displayPlays()
-    Button(frame1, text="Start Play", image=bimage1, command=startPlay).place(x=350, y=430)
+    Button(frame1, text="Start Play", image=bimage1, command=startPlay).place(x=365, y=450)
     window.mainloop()   
 
-main()
+
+if __name__ == '__main__':
+    main()
 
