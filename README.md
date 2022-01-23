@@ -1,4 +1,4 @@
-# Theatre-Prose
+# Theatre-Pros(e)
 An App to virtually view theatre plays or rehearse lines from popular theatre plays
  <br/>
 
