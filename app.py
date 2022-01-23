@@ -1,6 +1,5 @@
 import csv
 from tkinter import *
-from threading import Thread
 from playsound import playsound
 from utils import get_plays, get_players, get_lines
 
@@ -40,9 +39,9 @@ def startPlay():
     frame2.pack(fill="both", expand=True)
     Button(frame2, image=nxtimg, command=nextLine).place(x=820, y=460)
     lines = get_lines(selectedPlay, selectedPlayer) 
-    Label(frame2, bg="red4", fg="white", text=lines[count]['Play'], font=("Times", 30)).place(x=250, y=75)
-    Label(frame2, fg="black", text=lines[count]['Player'], font=("roboto", 20)).place(x=300, y=300)
-    Label(frame2, fg="black", text='"'+lines[count]['PlayerLine']+'"', font=("roboto", 18)).place(x=300, y=400)
+    Label(frame2, bg="red4", fg="white", text=lines[count]['Play'], font=("Times", 30)).place(x=280, y=75)
+    Label(frame2, fg="black", text=lines[count]['Player'], font=("roboto", 20)).place(x=260, y=300)
+    Label(frame2, fg="black", text='"'+lines[count]['PlayerLine']+'"', font=("roboto", 15)).place(x=250, y=350)
     count = count + 1
 
 def nextLine():
@@ -53,15 +52,15 @@ def nextLine():
     frame2.pack(fill="both", expand=True)
     Button(frame2, image=nxtimg, command=nextLine).place(x=820, y=460)
     if count < len(lines):
-        Label(frame2, bg="red2", fg="white", text=lines[count]['Play'], font=("Times", 30, "bold")).place(x=250, y=75)
-        Label(frame2, fg="black", text=lines[count]['Player'], font=("roboto", 20)).place(x=300, y=300)
-        Label(frame2, fg="black", text='"'+lines[count]['PlayerLine']+'"', font=("roboto", 15)).place(x=300, y=400)
+        Label(frame2, bg="red4", fg="white", text=lines[count]['Play'], font=("Times", 30)).place(x=280, y=75)
+        Label(frame2, fg="black", text=lines[count]['Player'], font=("roboto", 20)).place(x=260, y=300)
+        Label(frame2, fg="black", text='"'+lines[count]['PlayerLine']+'"', font=("roboto", 15)).place(x=250, y=350)
         count = count + 1
     else:
         if count == len(lines):
-            Label(frame2, fg="black", text="SCORE", font=("Times", 30)).place(x=250, y=75)
-            Label(frame2, fg="black", text=str(count)+" / "+str(count), font=("roboto", 40)).place(x=250, y=150)
-            Label(frame2, fg="black", text="Standing Ovation!", font=("helvetica", 40)).place(x=250, y=230)
+            Label(frame2, fg="dodgerblue2", text="SCORE", font=("Times", 30)).place(x=380, y=75)
+            Label(frame2, fg="black", text=str(count)+" / "+str(count), font=("roboto", 40)).place(x=380, y=250)
+            Label(frame2, fg="darkgoldenrod2", text="Standing Ovation!", font=("helvetica", 30)).place(x=280, y=400)
         else:
             playsound("assets/applause.mp3")
             window.destroy()        
